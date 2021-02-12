@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 '''
 Created on 04/06/2020
 
@@ -242,7 +241,7 @@ print(FalseNegative)
 # predict = model_load.predict(data_array)
 # clss = int(np.where(predict == np.max(predict))[1] + 1)
 # print(clss)
-=======
+
 '''
 Created on 04/06/2020
 
@@ -486,4 +485,3 @@ print(FalseNegative)
 # predict = model_load.predict(data_array)
 # clss = int(np.where(predict == np.max(predict))[1] + 1)
 # print(clss)
->>>>>>> d0002fa40afa4e7c5fe208b9074018fc21865a12
