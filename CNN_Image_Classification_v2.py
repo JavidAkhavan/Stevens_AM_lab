@@ -293,7 +293,7 @@ plot_images(images=images, cls_true=cls_true)
 
 
 def new_weights(shape):
-    return tf.Variable(tf.truncated_normal(shape, stddev=0.05))
+    return tf.Variable(tf.random.truncated_normal(shape, stddev=0.05))
 
 
 def new_biases(length):
@@ -328,7 +328,7 @@ def new_conv_layer(input,  # The previous layer.
     # The padding is set to 'SAME' which means the input image
     # is padded with zeroes so the size of the output is the same.
     layer = tf.nn.conv2d(input=input,
-                         filter=weights,
+                         filters=weights,
                          strides=[1, 1, 1, 1],
                          padding='SAME')
 
@@ -341,7 +341,7 @@ def new_conv_layer(input,  # The previous layer.
         # This is 2x2 max-pooling, which means that we
         # consider 2x2 windows and select the largest value
         # in each window. Then we move 2 pixels to the next window.
-        layer = tf.nn.max_pool(value=layer,
+        layer = tf.nn.max_pool2d(input=layer,
                                ksize=[1, 2, 2, 1],
                                strides=[1, 2, 2, 1],
                                padding='SAME')
@@ -470,24 +470,24 @@ layer_fc2
 # ### Predicted Class
 
 y_pred = tf.nn.softmax(layer_fc2)
-y_pred_cls = tf.argmax(y_pred, dimension=1)
+y_pred_cls = tf.argmax(input=y_pred, axis=1)
 
 # ### Cost-function to be optimized
 
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc2,
-                                                        labels=y_true)
-cost = tf.reduce_mean(cross_entropy)
-optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
+                                                        labels=tf.stop_gradient(y_true))
+cost = tf.reduce_mean(input_tensor=cross_entropy)
+optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
 
 # ### Performance Measures
 
 correct_prediction = tf.equal(y_pred_cls, y_true_cls)
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+accuracy = tf.reduce_mean(input_tensor=tf.cast(correct_prediction, tf.float32))
 
 # ## TensorFlow Run
 
-session = tf.Session()
-session.run(tf.global_variables_initializer())
+session = tf.compat.v1.Session()
+session.run(tf.compat.v1.global_variables_initializer())
 
 train_batch_size = batch_size
 
@@ -582,7 +582,7 @@ def optimize(num_iterations):
 
 optimize(num_iterations=10000)
 
-x_test = data.valid.images.reshape(399, img_size_flat)
+x_test = data.valid.images.reshape(len(data.valid.labels), img_size_flat)
 
 feed_dict_test = {x: x_test, y_true: data.valid.labels}
 
