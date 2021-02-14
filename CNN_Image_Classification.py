@@ -5,7 +5,7 @@
 
 
 import os
-get_ipython().run_line_magic('matplotlib', 'inline')
+# get_ipython().run_line_magic('matplotlib', 'inline')
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import pandas as pd
@@ -23,9 +23,6 @@ from sklearn.utils import shuffle
 
 # ## Function of loading dataset
 
-# In[2]:
-
-
 def load_train(train_path, image_size, classes):
     images = []
     labels = []
@@ -33,14 +30,14 @@ def load_train(train_path, image_size, classes):
     cls = []
 
     print('Reading training images')
-    for fld in classes:   # assuming data directory has a separate folder for each class, and that each folder is named after the class
+    for fld in classes:  # assuming data directory has a separate folder for each class, and that each folder is named after the class
         index = classes.index(fld)
         print('Loading {} files (Index: {})'.format(fld, index))
         path = os.path.join(train_path, fld, '*g')
         files = glob.glob(path)
         for fl in files:
             image = cv2.imread(fl)
-            image = cv2.resize(image, (image_size, image_size), interpolation = cv2.INTER_LINEAR)
+            image = cv2.resize(image, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
             images.append(image)
             label = np.zeros(len(classes))
             label[index] = 1.0
@@ -66,17 +63,16 @@ def load_test(test_path, image_size):
     for fl in files:
         flbase = os.path.basename(fl)
         img = cv2.imread(fl)
-        img = cv2.resize(img, (image_size, image_size), interpolation = cv2.INTER_LINEAR)
+        img = cv2.resize(img, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
         X_test.append(img)
         X_test_id.append(flbase)
 
-### because we're not creating a DataSet object for the test images, normalization happens here
+    ### because we're not creating a DataSet object for the test images, normalization happens here
     X_test = np.array(X_test, dtype=np.uint8)
     X_test = X_test.astype('float32')
     X_test = X_test / 255
 
     return X_test, X_test_id
-
 
 
 class DataSet(object):
@@ -85,7 +81,6 @@ class DataSet(object):
         """Construct a DataSet. one_hot arg is used only if fake_data is true."""
 
         self._num_examples = images.shape[0]
-
 
         # Convert shape from [num examples, rows, columns, depth]
         # to [num examples, rows*columns] (assuming depth == 1)
@@ -152,6 +147,7 @@ class DataSet(object):
 def read_train_sets(train_path, image_size, classes, validation_size=0):
     class DataSets(object):
         pass
+
     data_sets = DataSets()
 
     images, labels, ids, cls = load_train(train_path, image_size, classes)
@@ -177,17 +173,14 @@ def read_train_sets(train_path, image_size, classes, validation_size=0):
 
 
 def read_test_set(test_path, image_size):
-    images, ids  = load_test(test_path, image_size)
+    images, ids = load_test(test_path, image_size)
     return images, ids
 
 
 # ## Configuration and Hyperparameters
 
-# In[62]:
-
-
 # Convolutional Layer 1.
-filter_size1 = 5 
+filter_size1 = 5
 num_filters1 = 64
 
 # Convolutional Layer 2.
@@ -199,16 +192,16 @@ num_filters2 = 64
 # num_filters3 = 128
 
 # Fully-connected layer 1.
-fc1_size = 128             # Number of neurons in fully-connected layer.
+fc1_size = 128  # Number of neurons in fully-connected layer.
 
 # Fully-connected layer 2.
-fc2_size = 128             # Number of neurons in fully-connected layer.
+fc2_size = 128  # Number of neurons in fully-connected layer.
 
 # Number of color channels for the images: 1 channel for gray-scale.
 num_channels = 3
 
 # image dimensions (only squares for now)
-img_size = 64
+img_size = 32
 
 # Size of image when flattened to a single dimension
 img_size_flat = img_size * img_size * num_channels
@@ -217,8 +210,7 @@ img_size_flat = img_size * img_size * num_channels
 img_shape = (img_size, img_size)
 
 # class info
-classes = ['Sphynx','Siamese','Ragdoll',
-           'Persian','Maine_Coon','British_shorthair','Bombay','Birman','Bengal','Abyssinian']
+classes = ['Empty', 'OK', 'Over', 'Under']
 
 # classes = ['Sphynx','Siamese',
 #            'Persian','Maine_Coon','British_shorthair']
@@ -226,7 +218,7 @@ classes = ['Sphynx','Siamese','Ragdoll',
 num_classes = len(classes)
 
 # batch size
-batch_size = 32
+batch_size = 64
 
 # validation split
 validation_size = .2
@@ -234,52 +226,34 @@ validation_size = .2
 # how long to wait after validation loss stops improving before terminating training
 early_stopping = None  # use None if you don't want to implement early stoping
 
-train_path = 'dataset'
+train_path = 'Test_data_labeled/labeled/'
 # test_path = 'test'
 checkpoint_dir = "ckpoint"
-
-
-# In[ ]:
-
-
-
-
-
-# In[63]:
-
 
 # load training dataset
 data = read_train_sets(train_path, img_size, classes, validation_size=validation_size)
 # test_images, test_ids = read_test_set(test_path, img_size)
 
 
-# In[64]:
-
-
 print("Size of:")
 print("- Training-set:\t\t{}".format(len(data.train.labels)))
 # print("- Test-set:\t\t{}".format(len(test_images)))
 print("- Validation:\t{}".format(len(data.valid.labels)))
-# print(images)
 
+
+# print(images)
 
 # ### Helper-function for plotting images
 
-# In[65]:
-
-
-
 def plot_images(images, cls_true, cls_pred=None):
-    
     if len(images) == 0:
         print("no images to show")
-        return 
+        return
     else:
         random_indices = random.sample(range(len(images)), min(len(images), 9))
-        
-        
-    images, cls_true  = zip(*[(images[i], cls_true[i]) for i in random_indices])
-    
+
+    images, cls_true = zip(*[(images[i], cls_true[i]) for i in random_indices])
+
     # Create figure with 3x3 sub-plots.
     fig, axes = plt.subplots(3, 3)
     fig.subplots_adjust(hspace=0.3, wspace=0.3)
@@ -296,22 +270,19 @@ def plot_images(images, cls_true, cls_pred=None):
 
         # Show the classes as the label on the x-axis.
         ax.set_xlabel(xlabel)
-        
+
         # Remove ticks from the plot.
         ax.set_xticks([])
         ax.set_yticks([])
-    
+
     # Ensure the plot is shown correctly with multiple plots
     # in a single Notebook cell.
     plt.show()
 
 
-# In[66]:
-
-
 # Get some random images and their labels from the train set.
 
-images, cls_true  = data.train.images, data.train.cls
+images, cls_true = data.train.images, data.train.cls
 
 # Plot the images and labels using our helper-function above.
 plot_images(images=images, cls_true=cls_true)
@@ -321,24 +292,21 @@ plot_images(images=images, cls_true=cls_true)
 
 # ### Helper-functions for creating new variables
 
-# In[67]:
-
 
 def new_weights(shape):
     return tf.Variable(tf.truncated_normal(shape, stddev=0.05))
+
+
 def new_biases(length):
     return tf.Variable(tf.constant(0.05, shape=[length]))
 
 
 # ### Convolutional Layer
 
-# In[68]:
-
-
-def new_conv_layer(input,              # The previous layer.
-                   num_input_channels, # Num. channels in prev. layer.
-                   filter_size,        # Width and height of each filter.
-                   num_filters,        # Number of filters.
+def new_conv_layer(input,  # The previous layer.
+                   num_input_channels,  # Num. channels in prev. layer.
+                   filter_size,  # Width and height of each filter.
+                   num_filters,  # Number of filters.
                    use_pooling=True):  # Use 2x2 max-pooling.
 
     # Shape of the filter-weights for the convolution.
@@ -396,9 +364,6 @@ def new_conv_layer(input,              # The previous layer.
 
 # ###  Flattening a layer
 
-# In[69]:
-
-
 def flatten_layer(layer):
     # Get the shape of the input layer.
     layer_shape = layer.get_shape()
@@ -409,7 +374,7 @@ def flatten_layer(layer):
     # The number of features is: img_height * img_width * num_channels
     # We can use a function from TensorFlow to calculate this.
     num_features = layer_shape[1:4].num_elements()
-    
+
     # Reshape the layer to [num_images, num_features].
     # Note that we just set the size of the second dimension
     # to num_features and the size of the first dimension to -1
@@ -426,13 +391,10 @@ def flatten_layer(layer):
 
 # ### Fully-Connected Layer
 
-# In[70]:
-
-
-def new_fc_layer(input,          # The previous layer.
-                 num_inputs,     # Num. inputs from prev. layer.
-                 num_outputs,    # Num. outputs.
-                 use_relu=True): # Use Rectified Linear Unit (ReLU)?
+def new_fc_layer(input,  # The previous layer.
+                 num_inputs,  # Num. inputs from prev. layer.
+                 num_outputs,  # Num. outputs.
+                 use_relu=True):  # Use Rectified Linear Unit (ReLU)?
 
     # Create new weights and biases.
     weights = new_weights(shape=[num_inputs, num_outputs])
@@ -451,39 +413,28 @@ def new_fc_layer(input,          # The previous layer.
 
 # ### Placeholder variables
 
-# In[71]:
-
-
 x = tf.placeholder(tf.float32, shape=[None, img_size_flat], name='x')
 x_image = tf.reshape(x, [-1, img_size, img_size, num_channels])
 y_true = tf.placeholder(tf.float32, shape=[None, num_classes], name='y_true')
 y_true_cls = tf.argmax(y_true, dimension=1)
 
-
 # ### Convolutional Layer 1
 
-# In[72]:
-
-
-layer_conv1, weights_conv1 =     new_conv_layer(input=x_image,
-                   num_input_channels=num_channels,
-                   filter_size=filter_size1,
-                   num_filters=num_filters1,
-                   use_pooling=True)
+layer_conv1, weights_conv1 = new_conv_layer(input=x_image,
+                                            num_input_channels=num_channels,
+                                            filter_size=filter_size1,
+                                            num_filters=num_filters1,
+                                            use_pooling=True)
 layer_conv1
-
 
 # ### Convolutional Layers 2 and 3
 
-# In[73]:
+layer_conv2, weights_conv2 = new_conv_layer(input=layer_conv1,
+                                            num_input_channels=num_filters1,
+                                            filter_size=filter_size2,
+                                            num_filters=num_filters2,
+                                            use_pooling=True)
 
-
-layer_conv2, weights_conv2 =     new_conv_layer(input=layer_conv1,
-                   num_input_channels=num_filters1,
-                   filter_size=filter_size2,
-                   num_filters=num_filters2,
-                   use_pooling=True)
-    
 # layer_conv3, weights_conv3 = \
 #     new_conv_layer(input=layer_conv2,
 #                    num_input_channels=num_filters2,
@@ -495,20 +446,13 @@ layer_conv2, weights_conv2 =     new_conv_layer(input=layer_conv1,
 
 # ### Flatten Layer
 
-# In[74]:
-
-
 # layer_flat, num_features = flatten_layer(layer_conv3)
 # print(layer_flat, num_features)
 
 layer_flat, num_features = flatten_layer(layer_conv2)
 print(layer_flat, num_features)
 
-
 # ### Fully-Connected Layer 1
-
-# In[75]:
-
 
 layer_fc1 = new_fc_layer(input=layer_flat,
                          num_inputs=num_features,
@@ -516,11 +460,7 @@ layer_fc1 = new_fc_layer(input=layer_flat,
                          use_relu=True)
 layer_fc1
 
-
 # ### Fully-Connected Layer 2
-
-# In[76]:
-
 
 layer_fc2 = new_fc_layer(input=layer_fc1,
                          num_inputs=fc1_size,
@@ -528,48 +468,29 @@ layer_fc2 = new_fc_layer(input=layer_fc1,
                          use_relu=False)
 layer_fc2
 
-
 # ### Predicted Class
-
-# In[77]:
-
 
 y_pred = tf.nn.softmax(layer_fc2)
 y_pred_cls = tf.argmax(y_pred, dimension=1)
 
-
 # ### Cost-function to be optimized
-
-# In[78]:
-
 
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc2,
                                                         labels=y_true)
 cost = tf.reduce_mean(cross_entropy)
 optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
 
-
 # ### Performance Measures
-
-# In[79]:
-
 
 correct_prediction = tf.equal(y_pred_cls, y_true_cls)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-
 # ## TensorFlow Run
-
-# In[80]:
-
 
 session = tf.Session()
 session.run(tf.global_variables_initializer())
 
 train_batch_size = batch_size
-
-
-# In[81]:
 
 
 # def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
@@ -580,9 +501,6 @@ train_batch_size = batch_size
 #     print(msg.format(epoch + 1, acc, val_acc, val_loss))
 
 
-# In[82]:
-
-
 def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
     # Calculate the accuracy on the training-set.
     acc = session.run(accuracy, feed_dict=feed_dict_train)
@@ -591,11 +509,9 @@ def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
     print(msg.format(epoch + 1, acc, val_acc, val_loss))
 
 
-# In[83]:
-
-
 # Counter for total number of iterations performed so far.
 total_iterations = 0
+
 
 def optimize(num_iterations):
     # Ensure we update the global variable rather than a local copy.
@@ -603,7 +519,7 @@ def optimize(num_iterations):
 
     # Start-time used for printing time-usage below.
     start_time = time.time()
-    
+
     best_val_loss = float("inf")
     patience = 0
 
@@ -626,7 +542,7 @@ def optimize(num_iterations):
         # for placeholder variables in the TensorFlow graph.
         feed_dict_train = {x: x_batch,
                            y_true: y_true_batch}
-        
+
         feed_dict_validate = {x: x_valid_batch,
                               y_true: y_valid_batch}
 
@@ -634,16 +550,15 @@ def optimize(num_iterations):
         # TensorFlow assigns the variables in feed_dict_train
         # to the placeholder variables and then runs the optimizer.
         session.run(optimizer, feed_dict=feed_dict_train)
-        
 
         # Print status at end of each epoch (defined as full pass through training dataset).
-        if i % int(data.train.num_examples/batch_size) == 0: 
+        if i % int(data.train.num_examples / batch_size) == 0:
             val_loss = session.run(cost, feed_dict=feed_dict_validate)
-            epoch = int(i / int(data.train.num_examples/batch_size))
-            
+            epoch = int(i / int(data.train.num_examples / batch_size))
+
             print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss)
-            
-            if early_stopping:    
+
+            if early_stopping:
                 if val_loss < best_val_loss:
                     best_val_loss = val_loss
                     patience = 0
@@ -666,82 +581,15 @@ def optimize(num_iterations):
     print("Time elapsed: " + str(timedelta(seconds=int(round(time_dif)))))
 
 
-# In[84]:
-
-
 optimize(num_iterations=10000)
-
-
-# In[85]:
-
 
 x_test = data.valid.images.reshape(399, img_size_flat)
 
-feed_dict_test = {x: x_test,
-                              y_true: data.valid.labels}
+feed_dict_test = {x: x_test, y_true: data.valid.labels}
 
 val_loss = session.run(cost, feed_dict=feed_dict_test)
 
 val_acc = session.run(accuracy, feed_dict=feed_dict_test)
 
-
-# In[87]:
-
-
 msg_test = "Test Accuracy: {0:>6.1%}"
 print(msg_test.format(val_acc))
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
