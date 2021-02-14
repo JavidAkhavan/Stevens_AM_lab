@@ -1,1 +1,8 @@
 .idea/
+
+# classification model
+KNN_hist_20210213_014719.sav
+KNN_raw_20210213_025502.sav
+NN_raw_20210213_093839.sav
+NN_dist_20210213_101451.sav
+svc_raw_20210213_123050.sav
