@@ -79,7 +79,7 @@ for (i, imagePath) in enumerate(imagePaths):
     # extract raw pixel intensity "features"
     # followed by a color histogram to characterize the color distribution of the pixels
     # in the image
-    pixels = image_to_feature_vector(image, imagePath)
+    pixels = image_to_feature_vector(image, imagePath, size=(30, 30))
     hist = extract_color_histogram(image)
 
     # add the messages we got to the raw images, features, and labels matricies
@@ -108,18 +108,18 @@ print("[INFO] features matrix: {:.2f}MB".format(
 (trainFeat, testFeat, trainLabels, testLabels) = train_test_split(
     features, labels, test_size=0.25, random_state=42)
 
-# k-NN
-print("\n")
-print("[INFO] evaluating raw pixel accuracy...")
-model = KNeighborsClassifier(n_neighbors=args["neighbors"], n_jobs=args["jobs"])
-model.fit(trainRI, trainRL)
-acc = model.score(testRI, testRL)
-print("[INFO] k-NN classifier: k=%d" % args["neighbors"])
-print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
-# save the model to disk
-filename = 'KNN_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
-joblib.dump(model, open(filename, 'wb'))
-print("[INFO] model saved as " + filename)
+# # k-NN
+# print("\n")
+# print("[INFO] evaluating raw pixel accuracy...")
+# model = KNeighborsClassifier(n_neighbors=args["neighbors"], n_jobs=args["jobs"])
+# model.fit(trainRI, trainRL)
+# acc = model.score(testRI, testRL)
+# print("[INFO] k-NN classifier: k=%d" % args["neighbors"])
+# print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
+# # save the model to disk
+# filename = 'KNN_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+# joblib.dump(model, open(filename, 'wb'))
+# print("[INFO] model saved as " + filename)
 
 # # k-NN
 # print("\n")
@@ -133,55 +133,57 @@ print("[INFO] model saved as " + filename)
 # filename = 'KNN_hist_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
 # joblib.dump(model, open(filename, 'wb'))
 # print("[INFO] model saved as " + filename)
-
-#neural network
-print("\n")
-print("[INFO] evaluating raw pixel accuracy...")
-model = MLPClassifier(hidden_layer_sizes=(50,),  alpha=1e-4,
-                      solver='sgd', tol=1e-4, random_state=1,
-                      learning_rate_init=.1) # max_iter=1000,
-model.fit(trainRI, trainRL)
-acc = model.score(testRI, testRL)
-print("[INFO] neural network raw pixel accuracy: {:.2f}%".format(acc * 100))
-# save the model to disk
-filename = 'NN_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
-joblib.dump(model, open(filename, 'wb'))
-print("[INFO] model saved as " + filename)
-
-#neural network
-print("\n")
-print("[INFO] evaluating histogram accuracy...")
-model = MLPClassifier(hidden_layer_sizes=(50,), max_iter=1000, alpha=1e-4,
-                      solver='sgd', tol=1e-4, random_state=1,
-                      learning_rate_init=.1)
-model.fit(trainFeat, trainLabels)
-acc = model.score(testFeat, testLabels)
-print("[INFO] neural network histogram accuracy: {:.2f}%".format(acc * 100))
-filename = 'NN_dist_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
-joblib.dump(model, open(filename, 'wb'))
-print("[INFO] model saved as " + filename)
+#
+# #neural network
+# print("\n")
+# print("[INFO] evaluating raw pixel accuracy...")
+# model = MLPClassifier(hidden_layer_sizes=(50,),  alpha=1e-4,
+#                       solver='sgd', tol=1e-4, random_state=1,
+#                       learning_rate_init=.1) # max_iter=1000,
+# model.fit(trainRI, trainRL)
+# acc = model.score(testRI, testRL)
+# print("[INFO] neural network raw pixel accuracy: {:.2f}%".format(acc * 100))
+# # save the model to disk
+# filename = 'NN_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+# joblib.dump(model, open(filename, 'wb'))
+# print("[INFO] model saved as " + filename)
+#
+# #neural network
+# print("\n")
+# print("[INFO] evaluating histogram accuracy...")
+# model = MLPClassifier(hidden_layer_sizes=(50,), max_iter=1000, alpha=1e-4,
+#                       solver='sgd', tol=1e-4, random_state=1,
+#                       learning_rate_init=.1)
+# model.fit(trainFeat, trainLabels)
+# acc = model.score(testFeat, testLabels)
+# print("[INFO] neural network histogram accuracy: {:.2f}%".format(acc * 100))
+# filename = 'NN_dist_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+# joblib.dump(model, open(filename, 'wb'))
+# print("[INFO] model saved as " + filename)
 
 #SVC
 print("\n")
 print("[INFO] evaluating raw pixel accuracy...")
-model = SVC(max_iter=2000, class_weight='balanced')  #
+start = time.time()
+model = SVC(C=50, class_weight='balanced')  #, max_iter=3000
 model.fit(trainRI, trainRL)
+print("[INFO] training took {:.2f} seconds".format(time.time() - start))
 acc = model.score(testRI, testRL)
 print("[INFO] SVM-SVC raw pixel accuracy: {:.2f}%".format(acc * 100))
-filename = 'svc_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+filename = 'svc_raw_10_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
 joblib.dump(model, open(filename, 'wb'))
 print("[INFO] model saved as " + filename)
 
-#SVC
-print("\n")
-print("[INFO] evaluating histogram accuracy...")
-model = SVC(max_iter=1000, class_weight='balanced')
-model.fit(trainFeat, trainLabels)
-acc = model.score(testFeat, testLabels)
-print("[INFO] SVM-SVC histogram accuracy: {:.2f}%".format(acc * 100))
-filename = 'svc_dist_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
-joblib.dump(model, open(filename, 'wb'))
-print("[INFO] model saved as " + filename)
+# #SVC
+# print("\n")
+# print("[INFO] evaluating histogram accuracy...")
+# model = SVC(max_iter=1000, class_weight='balanced')
+# model.fit(trainFeat, trainLabels)
+# acc = model.score(testFeat, testLabels)
+# print("[INFO] SVM-SVC histogram accuracy: {:.2f}%".format(acc * 100))
+# filename = 'svc_dist_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+# joblib.dump(model, open(filename, 'wb'))
+# print("[INFO] model saved as " + filename)
 # '''
 # '''
 

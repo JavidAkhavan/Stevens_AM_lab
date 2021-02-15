@@ -22,6 +22,13 @@ import imutils
 import time
 import cv2
 import os
+import joblib
+
+
+def image_to_feature_vector(image, name, size=(128, 128)):
+    # resize the image to a fixed size, then flatten the image into
+    # a list of raw pixel intensities
+    return cv2.resize(image, size).flatten()
 
 
 def extract_color_histogram(image, bins=(8, 8, 8)):
@@ -69,7 +76,10 @@ for (i, imagePath) in enumerate(imagePaths):
     # extract a color histogram from the image, then update the
     # data matrix and labels list
     hist = extract_color_histogram(image)
-    data.append(hist)
+    # flatten the raw pixel
+    pixels = image_to_feature_vector(image, imagePath, size=(30, 30))
+    # choose using hist or pixels to run grid search
+    data.append(pixels)
     labels.append(label)
     # show an update every 1,000 images
     if i > 0 and i % 1000 == 0:
@@ -99,3 +109,6 @@ print("[INFO] grid search accuracy: {:.2f}%".format(acc * 100))
 print("[INFO] grid search best parameters: {}".format(
 	grid.best_params_))
 
+filename = 'svc_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+joblib.dump(model, open(filename, 'wb'))
+print("[INFO] model saved as " + filename)
