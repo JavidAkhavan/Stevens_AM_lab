@@ -62,9 +62,9 @@ train_generator = datagen.flow_from_directory(
     'Test_data_labeled/labeled/',
     # target_size=(411, 411),
     # target_size=(124, 124),
-    target_size=(32, 32),
+    target_size=(30, 30),
     color_mode='rgb',
-    batch_size=150,
+    batch_size=300,
     class_mode='binary',
     subset='training',
 
@@ -73,7 +73,7 @@ train_generator = datagen.flow_from_directory(
 validation_generator = datagen.flow_from_directory(
     'Test_data_labeled/labeled/',
     #    target_size=(411, 411),
-    target_size=(32, 32),
+    target_size=(30, 30),
     color_mode='rgb',
     batch_size=100,
     class_mode='binary',
@@ -81,6 +81,11 @@ validation_generator = datagen.flow_from_directory(
     shuffle=False
 )
 
+def custom_sparse_categorical_accuracy(y_true, y_pred):
+    flatten_y_true = K.cast( K.reshape(y_true,(-1,1) ), K.floatx())
+    flatten_y_pred = K.cast(K.reshape(y_pred, (-1, y_pred.shape[-1])), K.floatx())
+    y_pred_labels = K.cast(K.argmax(flatten_y_pred, axis=-1), K.floatx())
+    return K.cast(K.equal(flatten_y_true,y_pred_labels), K.floatx())
 
 # from tensorflow.keras.applications import VGG16
 #
@@ -99,37 +104,32 @@ validation_generator = datagen.flow_from_directory(
 
 # %% Mine CNN
 model = models.Sequential()
-model.add(layers.Conv2D(6, (3, 3), activation='relu', input_shape=(32, 32, 3)))
-# model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+model.add(layers.Conv2D(64, 3, activation='relu', input_shape=(30, 30, 3)))
+# model.add(layers.Conv2D(64, 3, activation='relu'))
 model.add(layers.BatchNormalization(scale=False, center=False))
 model.add(layers.MaxPooling2D((2, 2)))
 # model.add(layers.Dropout(0.5))
 
-model.add(layers.Conv2D(12, (5, 5), activation='relu'))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+# model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 # model.add(layers.Conv2D(64, (5, 5), activation='relu'))
-# model.add(layers.Conv2D(64, (5, 5), activation='relu'))
+model.add(layers.BatchNormalization(scale=False, center=False))
 model.add(layers.MaxPooling2D((2, 2)))
 # model.add(layers.Dropout(0.5))
-model.add(layers.BatchNormalization(scale=False, center=False))
+
 
 # model.add(layers.Conv2D(24, (5, 5), activation='relu'))
-# # model.add(layers.Conv2D(128, (5, 5), activation='relu'))
+# model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+# model.add(layers.BatchNormalization(scale=False, center=False))
 # model.add(layers.MaxPooling2D((2, 2)))
 # # model.add(layers.Conv2D(128, (3, 3), activation='relu'))
 # # model.add(layers.Dropout(0.25))
-# model.add(layers.BatchNormalization(scale=False, center=False))
-#
-# model.add(layers.Conv2D(48, (5, 5), activation='relu'))
-# # model.add(layers.Conv2D(128, (5, 5), activation='relu'))
-# model.add(layers.MaxPooling2D((2, 2)))
-# # model.add(layers.Conv2D(128, (3, 3), activation='relu'))
-# # model.add(layers.Dropout(0.25))
-# model.add(layers.BatchNormalization(scale=False, center=False))
 
 
 model.add(layers.Flatten())
 model.add(layers.Dropout(0.5))
-# model.add(layers.Dense(20, activation='relu'))
+model.add(layers.Dense(256, activation='relu'))
+model.add(layers.Dense(128, activation='relu'))
 model.add(layers.BatchNormalization(scale=False, center=False))
 
 # model.add(layers.Dropout(0.5))
@@ -138,15 +138,15 @@ model.add(layers.Dense(4, activation='softmax'))
 model.summary()
 
 model.compile(optimizer = keras.optimizers.Adam(learning_rate=0.0001),
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy']  # ,f1_m,precision_m, recall_m
+              loss='sparse_categorical_crossentropy', # sparse_categorical_crossentropy
+              metrics=['accuracy']  # ,f1_m,precision_m, recall_m, 'accuracy'custom_sparse_categorical_accuracy
               ) #'adam',  # optimizer = keras.optimizers.RMSprop(lr=1e-4)
  #loss='categorical_crossentropy'
 
 history = model.fit(
     train_generator,
     # steps_per_epoch=30,
-    epochs=100,
+    epochs=50,
     validation_data=validation_generator,
     validation_steps=90
 )
@@ -167,7 +167,7 @@ plt.ylabel('Loss')
 plt.legend(loc='upper right')
 
 # Confution Matrix and Classification Report
-Y_pred = model.predict_generator(validation_generator, 130)
+Y_pred = model.predict_generator(validation_generator, 140)
 y_pred = np.argmax(Y_pred, axis=1)
 print('Confusion Matrix')
 cm1 = confusion_matrix(validation_generator.classes, y_pred)
