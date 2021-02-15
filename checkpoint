@@ -1,0 +1,2 @@
+model_checkpoint_path: "2_3_2021_6am_weights.tf"
+all_model_checkpoint_paths: "2_3_2021_6am_weights.tf"
