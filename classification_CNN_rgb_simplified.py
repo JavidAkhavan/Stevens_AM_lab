@@ -50,7 +50,7 @@ datagen = keras.preprocessing.image.ImageDataGenerator(
     # width_shift_range=0, # fraction of total width
     # height_shift_range=0, # fraction of total height
     # shear_range=0, # ramdom change
-    zoom_range=[1.0, 1.5],  # ramdom zoom
+    # zoom_range=[1.0, 1.5],  # ramdom zoom
     horizontal_flip=True,  # flip transform
     # fill_mode='nearest',
     # brightness_range=[0.8, 1.2],
@@ -64,7 +64,7 @@ train_generator = datagen.flow_from_directory(
     # target_size=(124, 124),
     target_size=(30, 30),
     color_mode='rgb',
-    batch_size=300,
+    batch_size=64,
     class_mode='binary',
     subset='training',
 
@@ -75,7 +75,7 @@ validation_generator = datagen.flow_from_directory(
     #    target_size=(411, 411),
     target_size=(30, 30),
     color_mode='rgb',
-    batch_size=100,
+    batch_size=32,
     class_mode='binary',
     subset='validation',
     shuffle=False
@@ -104,16 +104,18 @@ def custom_sparse_categorical_accuracy(y_true, y_pred):
 
 # %% Mine CNN
 model = models.Sequential()
-model.add(layers.Conv2D(64, 3, activation='relu', input_shape=(30, 30, 3)))
+model.add(layers.Conv2D(64, 3, input_shape=(30, 30, 3)))
 # model.add(layers.Conv2D(64, 3, activation='relu'))
-model.add(layers.BatchNormalization(scale=False, center=False))
+model.add(layers.BatchNormalization()) #scale=False, center=False
+model.add(layers.Activation('relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 # model.add(layers.Dropout(0.5))
 
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.Conv2D(64, (3, 3)))
 # model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 # model.add(layers.Conv2D(64, (5, 5), activation='relu'))
-model.add(layers.BatchNormalization(scale=False, center=False))
+model.add(layers.BatchNormalization())
+model.add(layers.Activation('relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 # model.add(layers.Dropout(0.5))
 
@@ -128,9 +130,12 @@ model.add(layers.MaxPooling2D((2, 2)))
 
 model.add(layers.Flatten())
 model.add(layers.Dropout(0.5))
-model.add(layers.Dense(256, activation='relu'))
-model.add(layers.Dense(128, activation='relu'))
-model.add(layers.BatchNormalization(scale=False, center=False))
+model.add(layers.Dense(256))
+model.add(layers.Activation('relu'))
+model.add(layers.BatchNormalization())
+model.add(layers.Dense(128))
+model.add(layers.Activation('relu'))
+model.add(layers.BatchNormalization())
 
 # model.add(layers.Dropout(0.5))
 model.add(layers.Dense(4, activation='softmax'))
