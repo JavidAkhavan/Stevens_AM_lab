@@ -22,6 +22,7 @@ import imutils
 import time
 import cv2
 import os
+import joblib
 
 
 def extract_color_histogram(image, bins=(8, 8, 8)):
@@ -99,3 +100,7 @@ print("[INFO] grid search accuracy: {:.2f}%".format(acc * 100))
 print("[INFO] grid search best parameters: {}".format(
 	grid.best_params_))
 
+# save the model to disk
+filename = 'KNN_dist_best_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+joblib.dump(model, open(filename, 'wb'))
+print("[INFO] model saved as " + filename)

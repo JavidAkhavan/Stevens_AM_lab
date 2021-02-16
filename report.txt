@@ -1,0 +1,29 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 0 issues that require attention
+--------------------------------------------------------------------------------
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'CNN_Image_Classification.py'
+ outputting to 'CNN_Image_Classification_v2.py'
+--------------------------------------------------------------------------------
+
+296:23: INFO: Renamed 'tf.truncated_normal' to 'tf.random.truncated_normal'
+330:12: INFO: Renamed keyword argument for tf.nn.conv2d from filter to filters
+344:16: INFO: Renamed keyword argument for tf.nn.max_pool from value to input
+344:16: INFO: Renamed 'tf.nn.max_pool' to 'tf.nn.max_pool2d'
+473:13: INFO: Added keywords to args of function 'tf.argmax'
+473:13: INFO: Renamed keyword argument for tf.argmax from dimension to axis
+477:16: INFO: Changing labels arg of tf.nn.softmax_cross_entropy_with_logits to tf.stop_gradient(labels). Please check this transformation.
+
+479:7: INFO: Added keywords to args of function 'tf.reduce_mean'
+480:12: INFO: Renamed 'tf.train.AdamOptimizer' to 'tf.compat.v1.train.AdamOptimizer'
+485:11: INFO: Added keywords to args of function 'tf.reduce_mean'
+489:10: INFO: Renamed 'tf.Session' to 'tf.compat.v1.Session'
+490:12: INFO: Renamed 'tf.global_variables_initializer' to 'tf.compat.v1.global_variables_initializer'
+--------------------------------------------------------------------------------
+
