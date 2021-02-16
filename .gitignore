@@ -1,12 +1,5 @@
 .idea/
-<<<<<<< HEAD
 venv/
-<<<<<<< HEAD
 BackUp_2_15_2021/
 BackUp_2_14_2021/
-=======
->>>>>>> parent of 6b218d18f (delete some images)
-=======
-
->>>>>>> parent of dd06a7e18 (Update .gitignore)
 img_data.npy
