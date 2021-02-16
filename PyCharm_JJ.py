@@ -76,7 +76,7 @@ def create_dataset(img_folder, IMG_HEIGHT=30, IMG_WIDTH=30):
 
 
 # extract the image array and class name
-img_folder = r'C:\Users\steve\Documents\GitHub\Stevens_AM_lab\Test_data_labeled\labeled'
+img_folder = r'D:\Javid\Conference\Test_data_labeled\labeled'
 img_data, class_name = create_dataset(img_folder)
 toc()
 
@@ -173,7 +173,7 @@ class Encod_2(tf.keras.Model):
         self.conv1x1_2 = tf.keras.layers.Conv2D(filters_1x1, (3, 3), padding='same')
         self.max_pool2 = tf.keras.layers.MaxPool2D((2,2),strides=(2, 2), padding='same')
         self.act = tf.keras.layers.Activation('relu')
-        self.dropout = tf.keras.layers.Dropout(0.2)
+        self.dropout = tf.keras.layers.Dropout(0.25)
         self.norm = tf.keras.layers.BatchNormalization()
         self.norm2 = tf.keras.layers.BatchNormalization()
     def call(self, inputs):
@@ -184,7 +184,7 @@ class Encod_2(tf.keras.Model):
         b2 = self.conv1x1_2(b1_droped)
         b2_norm = self.norm2(b2)
         b2_act = self.act(b2_norm)
-        b3 =   self.max_pool2(b2_act)
+        b3 = self.max_pool2(b2_act)
         return b3
 ## endregion
 
@@ -222,7 +222,7 @@ class Class_out(tf.keras.Model):
         self.D2 = tf.keras.layers.Dense(40, activation='relu')
         self.D3 = tf.keras.layers.Dense(12, activation='relu')
         self.D4 = tf.keras.layers.Dense(4, activation='softmax')
-        self.dropout = tf.keras.layers.Dropout(0.2)
+        self.dropout = tf.keras.layers.Dropout(0.25)
         # self.D5 = tf.keras.layers.Softmax()
         # self.D0 = Encod_comp()
 
@@ -235,8 +235,8 @@ class Class_out(tf.keras.Model):
         l2 = self.D1(l1_droped)
         l2_droped =self.dropout(l2)
         l3 = self.D2(l2_droped)
-        #l3_droped =self.dropout(l3)
-        l4 = self.D3(l3)
+        l3_droped =self.dropout(l3)
+        l4 = self.D3(l3_droped)
         l5 = self.D4(l4)
         # l6 = self.D5(l5)
 
@@ -332,7 +332,7 @@ model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
 model_1 = Model_comp()
 
 #model_1.load('2_3_2021_6am.tf')
-#model_1.load_weights('2_3_2021_6am_weights.tf')
+model_1.load_weights('tmp')
 #np.load('img_data',img_data)
 #np.load('onehot_encoded',onehot_encoded)
 
@@ -341,8 +341,8 @@ model_1.compile(optimizer='adam', loss=['mean_squared_error' , 'categorical_cros
 #model_1.compile(loss="mean_squared_error", optimizer='RMSprop')
 history = model_1.fit(x=img_data,
     y=[img_data, onehot_encoded],
-    batch_size=32,
-    epochs=20,
+    batch_size=128,
+    epochs=1,
     verbose=1,
     callbacks=[model_checkpoint_callback],
     validation_split=0.2,
@@ -352,13 +352,13 @@ history = model_1.fit(x=img_data,
 ## endregion
 
 
+
 ## region Saving
 #model_1.save('2_3_2021_6am.tf')
-model_1.save_weights('2_3_2021_6am_weights.tf')
+model_1.save_weights('2_18_2021_6am_weights.tf')
 #np.save('img_data',img_data)
 #np.save('onehot_encoded',onehot_encoded)
 ##endregion
-model_1.predict
 
 
 plt.figure()
@@ -402,4 +402,18 @@ for i in range(3):
     FalseNegative.append(sum(cm1[i, :]) - cm1[i, i])
 print('FalseNegative')
 print(FalseNegative)
+
+import random
+
+random.randint(0,9)
+fig, axs = plt.subplots(2, 10)
+for j in range(10):
+    i = random.randint(0,43400)
+    temp_img = model_1.predict(img_data[[i]])
+    y_pred = label_encoder.inverse_transform([argmax(temp_img[1])])
+    y_true = label_encoder.inverse_transform([np.argmax(onehot_encoded[i])])
+    axs[1,j].imshow(temp_img[0][0])
+    axs[1,j].set_title(str(y_pred))
+    axs[0,j].imshow(img_data[i])
+    axs[0,j].set_title(str(y_true))
 
