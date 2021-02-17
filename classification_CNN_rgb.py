@@ -80,10 +80,10 @@ validation_generator = datagen.flow_from_directory(
     shuffle=False
 )
 
-from tensorflow.keras.applications import VGG16
-# from tensorflow.keras.applications import VGG19
+# from tensorflow.keras.applications import VGG16
+from tensorflow.keras.applications import VGG19
 # from tensorflow.keras.applications import MobileNetV2
-conv_base = VGG16(weights='imagenet',
+conv_base = VGG19(weights='imagenet',
                   include_top=False,
                   input_shape=(32, 32, 3))
 # trainable_layer_names = ['block5_conv1', 'block5_conv2','block5_conv3', 'block5_pool']

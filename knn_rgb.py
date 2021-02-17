@@ -113,16 +113,27 @@ print("[INFO] features matrix: {:.2f}MB".format(
 # # k-NN
 # print("\n")
 # print("[INFO] evaluating raw pixel accuracy...")
+<<<<<<< HEAD
 # model = KNeighborsClassifier(n_neighbors=args["neighbors"], n_jobs=args["jobs"], metric='cityblock')
+=======
+# model = KNeighborsClassifier(n_neighbors=args["neighbors"], n_jobs=args["jobs"])
+>>>>>>> refs/remotes/origin/temp_Jacky
 # model.fit(trainRI, trainRL)
 # acc = model.score(testRI, testRL)
 # print("[INFO] k-NN classifier: k=%d" % args["neighbors"])
 # print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
 # # save the model to disk
+<<<<<<< HEAD
 # filename = 'KNN_raw_19_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
 # joblib.dump(model, open(filename, 'wb'))
 # print("[INFO] model saved as " + filename)
 #
+=======
+# filename = 'KNN_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+# joblib.dump(model, open(filename, 'wb'))
+# print("[INFO] model saved as " + filename)
+
+>>>>>>> refs/remotes/origin/temp_Jacky
 # # k-NN
 # print("\n")
 # print("[INFO] evaluating histogram accuracy...")
@@ -135,6 +146,7 @@ print("[INFO] features matrix: {:.2f}MB".format(
 # filename = 'KNN_hist_19_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
 # joblib.dump(model, open(filename, 'wb'))
 # print("[INFO] model saved as " + filename)
+<<<<<<< HEAD
 
 #
 #neural network
@@ -150,6 +162,18 @@ print("[INFO] features matrix: {:.2f}MB".format(
 # testRL_pred = model.predict(testRI)
 # acc = f1_score(testRL, testRL_pred, average='micro')
 # print("[INFO] neural network raw pixel accuracy: {:.2f}".format(acc))
+=======
+#
+# #neural network
+# print("\n")
+# print("[INFO] evaluating raw pixel accuracy...")
+# model = MLPClassifier(hidden_layer_sizes=(50,),  alpha=1e-4,
+#                       solver='sgd', tol=1e-4, random_state=1,
+#                       learning_rate_init=.1) # max_iter=1000,
+# model.fit(trainRI, trainRL)
+# acc = model.score(testRI, testRL)
+# print("[INFO] neural network raw pixel accuracy: {:.2f}%".format(acc * 100))
+>>>>>>> refs/remotes/origin/temp_Jacky
 # # save the model to disk
 # filename = 'NN_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
 # joblib.dump(model, open(filename, 'wb'))
@@ -172,14 +196,19 @@ print("[INFO] features matrix: {:.2f}MB".format(
 print("\n")
 print("[INFO] evaluating raw pixel accuracy...")
 start = time.time()
+<<<<<<< HEAD
 model = SVC(C=5, class_weight='balanced')  #max_iter=2000,
 model = joblib.load('svc_raw_5_20210215_201023.sav')
+=======
+model = SVC(C=50, class_weight='balanced')  #, max_iter=3000
+>>>>>>> refs/remotes/origin/temp_Jacky
 model.fit(trainRI, trainRL)
 print("[INFO] training took {:.2f} seconds".format(time.time() - start))
 acc = model.score(testRI, testRL)
 testRL_pred = model.predict(testRI)
 # acc = f1_score(testRL, testRL_pred, average='micro')
 print("[INFO] SVM-SVC raw pixel accuracy: {:.2f}%".format(acc * 100))
+<<<<<<< HEAD
 # target_names = ['Empty','OK', 'Over', 'Under']
 print(classification_report(testRL, testRL_pred))
 # filename = 'svc_raw_5_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
@@ -190,6 +219,16 @@ print(classification_report(testRL, testRL_pred))
 # print("\n")
 # print("[INFO] evaluating histogram accuracy...")
 # model = SVC(C=0.5, max_iter=1000, class_weight='balanced')
+=======
+filename = 'svc_raw_10_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+joblib.dump(model, open(filename, 'wb'))
+print("[INFO] model saved as " + filename)
+
+# #SVC
+# print("\n")
+# print("[INFO] evaluating histogram accuracy...")
+# model = SVC(max_iter=1000, class_weight='balanced')
+>>>>>>> refs/remotes/origin/temp_Jacky
 # model.fit(trainFeat, trainLabels)
 # acc = model.score(testFeat, testLabels)
 # print("[INFO] SVM-SVC histogram accuracy: {:.2f}%".format(acc * 100))
