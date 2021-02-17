@@ -168,22 +168,22 @@ rawImages, labels, ids, cls = load_data(data_path, img_size, classes)
 X_train, X_test, y_train, y_test = train_test_split(rawImages, labels, test_size=0.2, random_state=42)
 
 #################################################################
-regu = regularizers.l2(0.0002)
+regu = regularizers.l1_l2(l1=1e-5, l2=1e-4)
 # %% Mine CNN
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), kernel_regularizer=regularizers.l2(0.002), input_shape=(30, 30, 3)))
+model.add(layers.Conv2D(32, (3, 3), kernel_regularizer=regu, input_shape=(30, 30, 3)))
 model.add(layers.BatchNormalization())  # scale=False, center=False
 model.add(layers.Activation('relu'))
-model.add(layers.Conv2D(32, (3, 3), kernel_regularizer=regularizers.l2(0.002)))
+model.add(layers.Conv2D(32, (3, 3), kernel_regularizer=regu))
 model.add(layers.BatchNormalization())  # scale=False, center=False
 model.add(layers.Activation('relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Dropout(0.2))
 
-model.add(layers.Conv2D(64, (3, 3), kernel_regularizer=regularizers.l2(0.002)))
+model.add(layers.Conv2D(64, (3, 3), kernel_regularizer=regu))
 model.add(layers.BatchNormalization())
 model.add(layers.Activation('relu'))
-model.add(layers.Conv2D(64, (3, 3), kernel_regularizer=regularizers.l2(0.0002)))
+model.add(layers.Conv2D(64, (3, 3), kernel_regularizer=regu))
 model.add(layers.BatchNormalization())
 model.add(layers.Activation('relu'))
 model.add(layers.MaxPooling2D((2, 2)))
@@ -208,10 +208,10 @@ model.add(layers.Dropout(0.3))
 
 model.add(layers.Flatten())
 model.add(layers.Dropout(0.4))
-model.add(layers.Dense(256, kernel_regularizer=regularizers.l2(0.002)))
+model.add(layers.Dense(256, kernel_regularizer=regu))
 model.add(layers.Activation('relu'))
 model.add(layers.BatchNormalization())
-model.add(layers.Dense(128, kernel_regularizer=regularizers.l2(0.002)))
+model.add(layers.Dense(128, kernel_regularizer=regu))
 model.add(layers.Activation('relu'))
 model.add(layers.BatchNormalization())
 
@@ -232,7 +232,7 @@ history = model.fit(
     x=X_train,  # train_generator
     y=y_train,
     # steps_per_epoch=30,
-    epochs=100,
+    epochs=30,
     validation_data=(X_test, y_test),  # validation_generator
     validation_steps=90,
     callbacks=[model_checkpoint_callback]
