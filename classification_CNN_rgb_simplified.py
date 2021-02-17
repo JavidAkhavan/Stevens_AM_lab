@@ -63,6 +63,10 @@ datagen = keras.preprocessing.image.ImageDataGenerator(
     # width_shift_range=0, # fraction of total width
     # height_shift_range=0, # fraction of total height
     # shear_range=0, # ramdom change
+<<<<<<< HEAD
+    featurewise_std_normalization=True,
+=======
+>>>>>>> refs/remotes/origin/temp_Jacky
     # zoom_range=[1.0, 1.5],  # ramdom zoom
     horizontal_flip=True,  # flip transform
     # fill_mode='nearest',
@@ -80,7 +84,6 @@ train_generator = datagen.flow_from_directory(
     batch_size=64,
     class_mode='categorical',
     subset='training',
-
 )
 # 'D:/Google Drive/Research/Laser Scanner/Control/Data/3-24-20/total/CNN_6/rgb/'
 validation_generator = datagen.flow_from_directory(
@@ -88,10 +91,14 @@ validation_generator = datagen.flow_from_directory(
     #    target_size=(411, 411),
     target_size=(30, 30),
     color_mode='rgb',
+<<<<<<< HEAD
+    batch_size=50,
+=======
     batch_size=32,
+>>>>>>> refs/remotes/origin/temp_Jacky
     class_mode='categorical',
     subset='validation',
-    shuffle=False
+    shuffle=True
 )
 
 def custom_sparse_categorical_accuracy(y_true, y_pred):
@@ -222,8 +229,9 @@ model.summary()
 # load model weight
 model.load_weights('checkpoint/model_weights_2_15_21')
 
-model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001),
-              loss='categorical_crossentropy',  # sparse_categorical_crossentropy
+
+model.compile(optimizer = keras.optimizers.Adam(learning_rate=0.001),
+              loss='categorical_crossentropy', # sparse_categorical_crossentropy
               metrics=['accuracy']  # ,f1_m,precision_m, recall_m, 'accuracy'custom_sparse_categorical_accuracy
               )  # 'adam',  # optimizer = keras.optimizers.RMSprop(lr=1e-4)
 # loss='categorical_crossentropy'

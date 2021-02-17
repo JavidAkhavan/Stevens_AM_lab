@@ -3,15 +3,23 @@ checkpoint/
 tmp/
 
 
+
 # classification model
 KNN_hist_20210213_014719.sav
 KNN_raw_20210213_025502.sav
 NN_raw_20210213_093839.sav
 NN_dist_20210213_101451.sav
 svc_raw_20210213_123050.sav
+<<<<<<< HEAD
+KNN_hist_19_20210214_015419.sav
+KNN_raw_19_20210214_013722.sav
+svc_dist_20210214_174846.sav
+svc_raw_5_20210215_201023.sav
+=======
 svc_dist_20210213_140633.sav
 svc_raw_1000_20210215_093813.sav
 svc_raw_100_20210214_235731.sav
 svc_raw_10_20210215_105711.sav
 svc_raw_20210214_022713.sav
 svc_raw_50_20210215_132337.sav
+>>>>>>> refs/remotes/origin/temp_Jacky

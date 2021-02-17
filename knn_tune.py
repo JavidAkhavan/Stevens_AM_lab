@@ -23,12 +23,15 @@ import time
 import cv2
 import os
 import joblib
+<<<<<<< HEAD
+=======
 
 
 def image_to_feature_vector(image, name, size=(128, 128)):
     # resize the image to a fixed size, then flatten the image into
     # a list of raw pixel intensities
     return cv2.resize(image, size).flatten()
+>>>>>>> refs/remotes/origin/temp_Jacky
 
 
 def extract_color_histogram(image, bins=(8, 8, 8)):
@@ -109,6 +112,13 @@ print("[INFO] grid search accuracy: {:.2f}%".format(acc * 100))
 print("[INFO] grid search best parameters: {}".format(
 	grid.best_params_))
 
+<<<<<<< HEAD
+# save the model to disk
+filename = 'KNN_dist_best_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
+joblib.dump(model, open(filename, 'wb'))
+print("[INFO] model saved as " + filename)
+=======
 filename = 'svc_raw_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
 joblib.dump(model, open(filename, 'wb'))
 print("[INFO] model saved as " + filename)
+>>>>>>> refs/remotes/origin/temp_Jacky
