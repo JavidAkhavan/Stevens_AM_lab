@@ -173,12 +173,13 @@ print("\n")
 print("[INFO] evaluating raw pixel accuracy...")
 start = time.time()
 model = SVC(C=5, class_weight='balanced')  #max_iter=2000,
+model = joblib.load('svc_raw_5_20210215_201023.sav')
 model.fit(trainRI, trainRL)
 print("[INFO] training took {:.2f} seconds".format(time.time() - start))
 acc = model.score(testRI, testRL)
 testRL_pred = model.predict(testRI)
 # acc = f1_score(testRL, testRL_pred, average='micro')
-print("[INFO] SVM-SVC raw pixel accuracy: {:.2f}%".format(acc * 100 ))
+print("[INFO] SVM-SVC raw pixel accuracy: {:.2f}%".format(acc * 100))
 # target_names = ['Empty','OK', 'Over', 'Under']
 print(classification_report(testRL, testRL_pred))
 # filename = 'svc_raw_5_' + time.strftime("%Y%m%d_%H%M%S") + '.sav'
