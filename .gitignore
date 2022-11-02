@@ -1,2 +1,7 @@
 .idea/
 img_data.npy
+Test_data_labeled/labeled/desktop.ini
+Test_data_labeled/labeled/Empty/desktop.ini
+Test_data_labeled/labeled/OK/desktop.ini
+Test_data_labeled/labeled/Over/desktop.ini
+Test_data_labeled/labeled/Under/desktop.ini
